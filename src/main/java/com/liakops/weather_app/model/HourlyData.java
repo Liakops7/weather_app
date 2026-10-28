@@ -2,7 +2,6 @@ package com.liakops.weather_app.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.lang.classfile.instruction.BranchInstruction;
 import java.util.Date;
 import java.util.List;
 
