@@ -9,7 +9,7 @@ public class WeatherController {
 
     private final RestClient restClient = RestClient.create("https://api.open-meteo.com");
 
-    @GetMapping("/getWeather")
+    @GetMapping("/weather")
     public String getWeather(){
         String result = restClient
                 .get()
