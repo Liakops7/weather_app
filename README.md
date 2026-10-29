@@ -66,9 +66,11 @@ src/main/java/com/liakops/weather_app/
 ├── controller/
 │   ├── HelloController.java      # Test endpoints (/hello, /greet)
 │   └── WeatherController.java    # Weather endpoint (/weather)
-└── model/
-    ├── WeatherResponse.java      # Maps the full Open-Meteo JSON response
-    └── HourlyData.java           # Maps the "hourly" forecast data
+├── model/
+│   ├── WeatherResponse.java      # Maps the full Open-Meteo JSON response
+│   └── HourlyData.java           # Maps the "hourly" forecast data
+└── service/
+    └── WeatherService.java       # Calls the Open-Meteo API
 ```
 
 ## 📚 Development Log
