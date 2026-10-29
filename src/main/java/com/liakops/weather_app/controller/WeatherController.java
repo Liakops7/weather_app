@@ -18,7 +18,7 @@ public class WeatherController {
     public WeatherResponse getWeather(){
 
 
-        return weatherService.weatherService;
+        return weatherService.getForecast();
     }
 
 }
