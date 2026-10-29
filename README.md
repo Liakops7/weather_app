@@ -102,4 +102,5 @@ Created Java records (`WeatherResponse`, `HourlyData`) that mirror the JSON stru
 ## 👤 Author
 
 **Ilias Liakopoulos**, Computer Science graduate, Athens University of Economics and Business
+
 GitHub: [@Liakops7](https://github.com/Liakops7)
