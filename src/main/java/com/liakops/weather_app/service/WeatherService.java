@@ -27,7 +27,7 @@ public class WeatherService {
         return result;
     }
 
-    public GeoResult findCity (@RequestParam(defaultValue = "Αθήνα") String city){
+    public GeoResult findCity (@RequestParam String city){
         GeocodingResponse response = geocodingClient
                 .get()
                 .uri("/v1/search?name={name}&count=1&language=el", city)
