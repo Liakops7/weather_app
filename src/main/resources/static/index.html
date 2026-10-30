@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <!--for mobile versions -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Καιρός</title>
+    <!-- tailwind loading... -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<!-- TODO (Tailwind): φόντο σελίδας (π.χ. ουρανί gradient), κεντράρισμα, padding -->
+<body class="">
+
+    <!-- TODO (Tailwind): κάρτα στο κέντρο, λευκό φόντο, στρογγυλές γωνίες, σκιά -->
+    <main class="">
+
+        <h1 class="">Καιρός</h1>
+
+        <!-- search bar -->
+        <!-- TODO (Tailwind): input και κουμπί δίπλα-δίπλα (flex) -->
+        <form id="search-form" class="">
+            <input id="city-input" type="text" placeholder="Γράψε πόλη..." required class="">
+            <button type="submit" class="">Αναζήτηση</button>
+        </form>
+
+        <!-- error catching: (hidden) -->
+        <p id="error" class="hidden"></p>
+
+        <!-- results: (hidden) -->
+        <section id="result" class="hidden">
+            <h2 id="city-name" class=""></h2>
+            <p id="temperature" class=""></p>
+            <p id="wind" class=""></p>
+            <p id="humidity" class=""></p>
+            <p id="rain" class=""></p>
+        </section>
+    </main>
+
+    <script>
+        // Βρίσκουμε τη φόρμα και "ακούμε" πότε γίνεται submit (Enter ή κλικ στο κουμπί)
+        const form = document.getElementById("search-form");
+
+        form.addEventListener("submit", async (event) => {
+            // Χωρίς αυτό, ο browser θα έκανε reload τη σελίδα (default συμπεριφορά φόρμας)
+            event.preventDefault();
+
+            // Τι έγραψε ο χρήστης
+            const city = document.getElementById("city-input").value;
+
+            // TODO 1: Κάλεσε το /weather με την πόλη, με fetch και await
+            //         Χρησιμοποίησε template literal και encodeURIComponent(city),
+            //         ώστε ελληνικά και κενά να μπαίνουν σωστά στο URL
+            const response = await fetch("/weather?city={city}");
+
+
+            // TODO 2: Αν η απάντηση ΔΕΝ είναι ok:
+            //         - γράψε στο #error "Η πόλη δεν βρέθηκε" και εμφάνισέ το
+            //         - κρύψε το #result
+            //         - return (σταμάτα εδώ)
+            if (!response.ok) {
+
+            }
+            // TODO 3: Μετάτρεψε την απάντηση σε JSON
+            const data = await response.json();
+
+            // Βρίσκουμε σε ποια θέση των λιστών είναι η τρέχουσα ώρα
+            const i = findCurrentHourIndex(data.hourly.time);
+
+            // TODO 4: Γέμισε τα στοιχεία με textContent, χρησιμοποιώντας τη θέση i:
+            //   #city-name    → η πόλη που έγραψε ο χρήστης
+            //   #temperature  → θερμοκρασία + " °C"
+            //   #wind         → ταχύτητα ανέμου + " kn" και κατεύθυνση + "°"
+            //   #humidity     → υγρασία + "%"
+            //   #rain         → βροχή + " mm"
+
+            // TODO 5: Κρύψε το #error και εμφάνισε το #result
+        });
+
+        // Βοηθητική function (σου τη δίνω έτοιμη).
+        // Οι ώρες στο JSON είναι π.χ. "2026-10-30T18:00:00".
+        // Φτιάχνουμε το "2026-10-30T18" για την τρέχουσα ώρα και βρίσκουμε σε ποια θέση της λίστας είναι.
+        function findCurrentHourIndex(times) {
+            const now = new Date();
+            // padStart(2, "0"): το 9 γίνεται "09", για να ταιριάζει με τη μορφή του JSON
+            const pad = (n) => String(n).padStart(2, "0");
+            const prefix = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}`;
+            // findIndex: η θέση του πρώτου στοιχείου που ξεκινάει με το prefix
+            const index = times.findIndex((t) => t.startsWith(prefix));
+            // Αν δεν βρεθεί (-1), πάρε την πρώτη θέση
+            return index === -1 ? 0 : index;
+        }
+    </script>
+</body>
+</html>
