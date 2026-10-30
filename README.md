@@ -176,12 +176,8 @@ Developed the search page on a feature branch (`feature/city-search-ui`), opened
 - [x] Service layer and dependency injection
 - [x] Search weather by city name (Open-Meteo Geocoding API)
 - [x] Search page with HTML and JavaScript
-- [ ] Error handling when the Open-Meteo API is unavailable
-- [ ] Style the search page with Tailwind CSS
-- [ ] Remove the unused Thymeleaf dependency
-- [ ] Unit tests for `WeatherService`
-- [ ] Store search history / favourite cities in PostgreSQL
-- [ ] React frontend
+- [x] Error handling when the Open-Meteo API is unavailable
+- [x] Unit tests for `WeatherService`
 
 ## 👤 Author
 
