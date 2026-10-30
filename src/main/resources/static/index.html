@@ -48,10 +48,18 @@
             // Τι έγραψε ο χρήστης
             const city = document.getElementById("city-input").value;
 
+            // Βρίσκουμε μία φορά τα δύο "κουτιά" που θα εμφανίζουμε/κρύβουμε,
+            // για να μην γράφουμε συνέχεια document.getElementById(...)
+            const errorBox = document.getElementById("error");
+            const resultBox = document.getElementById("result");
+
+            // ── TODO 1: Κλήση στο backend ──
+            // Backticks ` ` + ${...} για να μπει η τιμή της πόλης μέσα στο URL.
+            // encodeURIComponent: "Νέα Σμύρνη" → "%CE%9D%CE%AD%CE%B1%20..." (ασφαλές για URL)
             // TODO 1: Κάλεσε το /weather με την πόλη, με fetch και await
             //         Χρησιμοποίησε template literal και encodeURIComponent(city),
             //         ώστε ελληνικά και κενά να μπαίνουν σωστά στο URL
-            const response = await fetch("/weather?city={city}");
+            const response = await fetch(`/weather?city=${encodeURIComponent(city)}`);
 
 
             // TODO 2: Αν η απάντηση ΔΕΝ είναι ok:
@@ -59,22 +67,27 @@
             //         - κρύψε το #result
             //         - return (σταμάτα εδώ)
             if (!response.ok) {
-
+                errorBox.textContent = "H πόλη δεν βρέθηκε"; // Γράφουμε το μήνυμα
+                errorBox.classList.remove("hidden"); // Εμφανίζουμε το μήνυμα
+                resultBox.classList.add("hidden");// Κρύβουμε τυχόν παλιό αποτέλεσμα
+                return;// Σταματάμε: δεν υπάρχουν δεδομένα για να δείξουμε
             }
             // TODO 3: Μετάτρεψε την απάντηση σε JSON
             const data = await response.json();
 
-            // Βρίσκουμε σε ποια θέση των λιστών είναι η τρέχουσα ώρα
-            const i = findCurrentHourIndex(data.hourly.time);
+            // Για να μην γράφουμε συνέχεια "data.hourly"
+                const h = data.hourly;
 
             // TODO 4: Γέμισε τα στοιχεία με textContent, χρησιμοποιώντας τη θέση i:
-            //   #city-name    → η πόλη που έγραψε ο χρήστης
-            //   #temperature  → θερμοκρασία + " °C"
-            //   #wind         → ταχύτητα ανέμου + " kn" και κατεύθυνση + "°"
-            //   #humidity     → υγρασία + "%"
-            //   #rain         → βροχή + " mm"
+            document.getElementById("city-name").textContent = city; //   #city-name    → η πόλη που έγραψε ο χρήστης
+            document.getElementById("temperature").textContent = `${h.temperature_2m[i]} °C`; //   #temperature  → θερμοκρασία + " °C"`
+            document.getElementById("wind").textContent        = `Άνεμος: ${h.wind_speed_10m[i]} kn από ${h.wind_direction_10m[i]}°`; //   #wind → ταχύτητα ανέμου + " kn" και κατεύθυνση + "°"
+            document.getElementById("humidity").textContent    = `Υγρασία: ${h.relative_humidity_2m[i]}%`; //   #humidity     → υγρασία + "%"
+            document.getElementById("rain").textContent        = `Βροχή: ${h.rain[i]} mm`; //   #rain         → βροχή + " mm"
 
             // TODO 5: Κρύψε το #error και εμφάνισε το #result
+            errorBox.classList.add("hidden");
+            resultBox.classList.remove("hidden");
         });
 
         // Βοηθητική function (σου τη δίνω έτοιμη).
