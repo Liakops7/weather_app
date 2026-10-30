@@ -20,7 +20,7 @@ public class WeatherService {
     }
 
     public GeoResult findCity (String city){
-        GeoResult result = geocodingClient
+        GeoResult response = geocodingClient
                 .get()
                 .uri("/v1/search?name={name}&count=1&language=el", city)
                 .retrieve()
