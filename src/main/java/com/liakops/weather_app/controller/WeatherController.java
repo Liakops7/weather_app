@@ -16,7 +16,7 @@ public class WeatherController {
     }
 
     @GetMapping("/weather")
-    public WeatherResponse getWeather(@RequestParam(defaultValue = "Αθήνα") String city) {
+    public WeatherResponse getWeather(@RequestParam String city) {
         return weatherService.getForecast(city);
     }
 
