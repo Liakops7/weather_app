@@ -12,97 +12,100 @@
 <!-- TODO (Tailwind): φόντο σελίδας (π.χ. ουρανί gradient), κεντράρισμα, padding -->
 <body class="">
 
-    <!-- TODO (Tailwind): κάρτα στο κέντρο, λευκό φόντο, στρογγυλές γωνίες, σκιά -->
-    <main class="">
+<!-- TODO (Tailwind): κάρτα στο κέντρο, λευκό φόντο, στρογγυλές γωνίες, σκιά -->
+<main class="">
 
-        <h1 class="">Καιρός</h1>
+    <h1 class="">Καιρός</h1>
 
-        <!-- search bar -->
-        <!-- TODO (Tailwind): input και κουμπί δίπλα-δίπλα (flex) -->
-        <form id="search-form" class="">
-            <input id="city-input" type="text" placeholder="Γράψε πόλη..." required class="">
-            <button type="submit" class="">Αναζήτηση</button>
-        </form>
+    <!-- search bar -->
+    <!-- TODO (Tailwind): input και κουμπί δίπλα-δίπλα (flex) -->
+    <form id="search-form" class="">
+        <input id="city-input" type="text" placeholder="Γράψε πόλη..." required class="">
+        <button type="submit" class="">Αναζήτηση</button>
+    </form>
 
-        <!-- error catching: (hidden) -->
-        <p id="error" class="hidden"></p>
+    <!-- error catching: (hidden) -->
+    <p id="error" class="hidden"></p>
 
-        <!-- results: (hidden) -->
-        <section id="result" class="hidden">
-            <h2 id="city-name" class=""></h2>
-            <p id="temperature" class=""></p>
-            <p id="wind" class=""></p>
-            <p id="humidity" class=""></p>
-            <p id="rain" class=""></p>
-        </section>
-    </main>
+    <!-- results: (hidden) -->
+    <section id="result" class="hidden">
+        <h2 id="city-name" class=""></h2>
+        <p id="temperature" class=""></p>
+        <p id="wind" class=""></p>
+        <p id="humidity" class=""></p>
+        <p id="rain" class=""></p>
+    </section>
+</main>
 
-    <script>
-        // Βρίσκουμε τη φόρμα και "ακούμε" πότε γίνεται submit (Enter ή κλικ στο κουμπί)
-        const form = document.getElementById("search-form");
+<script>
+    // Βρίσκουμε τη φόρμα και "ακούμε" πότε γίνεται submit (Enter ή κλικ στο κουμπί)
+    const form = document.getElementById("search-form");
 
-        form.addEventListener("submit", async (event) => {
-            // Χωρίς αυτό, ο browser θα έκανε reload τη σελίδα (default συμπεριφορά φόρμας)
-            event.preventDefault();
+    form.addEventListener("submit", async (event) => {
+        // Χωρίς αυτό, ο browser θα έκανε reload τη σελίδα (default συμπεριφορά φόρμας)
+        event.preventDefault();
 
-            // Τι έγραψε ο χρήστης
-            const city = document.getElementById("city-input").value;
+        // Τι έγραψε ο χρήστης
+        const city = document.getElementById("city-input").value;
 
-            // Βρίσκουμε μία φορά τα δύο "κουτιά" που θα εμφανίζουμε/κρύβουμε,
-            // για να μην γράφουμε συνέχεια document.getElementById(...)
-            const errorBox = document.getElementById("error");
-            const resultBox = document.getElementById("result");
+        // Βρίσκουμε μία φορά τα δύο "κουτιά" που θα εμφανίζουμε/κρύβουμε,
+        // για να μην γράφουμε συνέχεια document.getElementById(...)
+        const errorBox = document.getElementById("error");
+        const resultBox = document.getElementById("result");
 
-            // ── TODO 1: Κλήση στο backend ──
-            // Backticks ` ` + ${...} για να μπει η τιμή της πόλης μέσα στο URL.
-            // encodeURIComponent: "Νέα Σμύρνη" → "%CE%9D%CE%AD%CE%B1%20..." (ασφαλές για URL)
-            // TODO 1: Κάλεσε το /weather με την πόλη, με fetch και await
-            //         Χρησιμοποίησε template literal και encodeURIComponent(city),
-            //         ώστε ελληνικά και κενά να μπαίνουν σωστά στο URL
-            const response = await fetch(`/weather?city=${encodeURIComponent(city)}`);
+        // ── TODO 1: Κλήση στο backend ──
+        // Backticks ` ` + ${...} για να μπει η τιμή της πόλης μέσα στο URL.
+        // encodeURIComponent: "Νέα Σμύρνη" → "%CE%9D%CE%AD%CE%B1%20..." (ασφαλές για URL)
+        // TODO 1: Κάλεσε το /weather με την πόλη, με fetch και await
+        //         Χρησιμοποίησε template literal και encodeURIComponent(city),
+        //         ώστε ελληνικά και κενά να μπαίνουν σωστά στο URL
+        const response = await fetch(`/weather?city=${encodeURIComponent(city)}`);
 
 
-            // TODO 2: Αν η απάντηση ΔΕΝ είναι ok:
-            //         - γράψε στο #error "Η πόλη δεν βρέθηκε" και εμφάνισέ το
-            //         - κρύψε το #result
-            //         - return (σταμάτα εδώ)
-            if (!response.ok) {
-                errorBox.textContent = "H πόλη δεν βρέθηκε"; // Γράφουμε το μήνυμα
-                errorBox.classList.remove("hidden"); // Εμφανίζουμε το μήνυμα
-                resultBox.classList.add("hidden");// Κρύβουμε τυχόν παλιό αποτέλεσμα
-                return;// Σταματάμε: δεν υπάρχουν δεδομένα για να δείξουμε
-            }
-            // TODO 3: Μετάτρεψε την απάντηση σε JSON
-            const data = await response.json();
-
-            // Για να μην γράφουμε συνέχεια "data.hourly"
-                const h = data.hourly;
-
-            // TODO 4: Γέμισε τα στοιχεία με textContent, χρησιμοποιώντας τη θέση i:
-            document.getElementById("city-name").textContent = city; //   #city-name    → η πόλη που έγραψε ο χρήστης
-            document.getElementById("temperature").textContent = `${h.temperature_2m[i]} °C`; //   #temperature  → θερμοκρασία + " °C"`
-            document.getElementById("wind").textContent        = `Άνεμος: ${h.wind_speed_10m[i]} kn από ${h.wind_direction_10m[i]}°`; //   #wind → ταχύτητα ανέμου + " kn" και κατεύθυνση + "°"
-            document.getElementById("humidity").textContent    = `Υγρασία: ${h.relative_humidity_2m[i]}%`; //   #humidity     → υγρασία + "%"
-            document.getElementById("rain").textContent        = `Βροχή: ${h.rain[i]} mm`; //   #rain         → βροχή + " mm"
-
-            // TODO 5: Κρύψε το #error και εμφάνισε το #result
-            errorBox.classList.add("hidden");
-            resultBox.classList.remove("hidden");
-        });
-
-        // Βοηθητική function (σου τη δίνω έτοιμη).
-        // Οι ώρες στο JSON είναι π.χ. "2026-10-30T18:00:00".
-        // Φτιάχνουμε το "2026-10-30T18" για την τρέχουσα ώρα και βρίσκουμε σε ποια θέση της λίστας είναι.
-        function findCurrentHourIndex(times) {
-            const now = new Date();
-            // padStart(2, "0"): το 9 γίνεται "09", για να ταιριάζει με τη μορφή του JSON
-            const pad = (n) => String(n).padStart(2, "0");
-            const prefix = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}`;
-            // findIndex: η θέση του πρώτου στοιχείου που ξεκινάει με το prefix
-            const index = times.findIndex((t) => t.startsWith(prefix));
-            // Αν δεν βρεθεί (-1), πάρε την πρώτη θέση
-            return index === -1 ? 0 : index;
+        // TODO 2: Αν η απάντηση ΔΕΝ είναι ok:
+        //         - γράψε στο #error "Η πόλη δεν βρέθηκε" και εμφάνισέ το
+        //         - κρύψε το #result
+        //         - return (σταμάτα εδώ)
+        if (!response.ok) {
+            errorBox.textContent = "H πόλη δεν βρέθηκε"; // Γράφουμε το μήνυμα
+            errorBox.classList.remove("hidden"); // Εμφανίζουμε το μήνυμα
+            resultBox.classList.add("hidden");// Κρύβουμε τυχόν παλιό αποτέλεσμα
+            return;// Σταματάμε: δεν υπάρχουν δεδομένα για να δείξουμε
         }
-    </script>
+        // TODO 3: Μετάτρεψε την απάντηση σε JSON
+        const data = await response.json();
+
+        // Για να μην γράφουμε συνέχεια "data.hourly"
+        const h = data.hourly;
+
+        // Η θέση της τρέχουσας ώρας μέσα στις λίστες
+        const i = findCurrentHourIndex(h.time);
+
+        // TODO 4: Γέμισε τα στοιχεία με textContent, χρησιμοποιώντας τη θέση i:
+        document.getElementById("city-name").textContent = city; //   #city-name    → η πόλη που έγραψε ο χρήστης
+        document.getElementById("temperature").textContent = `${h.temperature_2m[i]} °C`; //   #temperature  → θερμοκρασία + " °C"`
+        document.getElementById("wind").textContent = `Άνεμος: ${h.wind_speed_10m[i]} kn από ${h.wind_direction_10m[i]}°`; //   #wind → ταχύτητα ανέμου + " kn" και κατεύθυνση + "°"
+        document.getElementById("humidity").textContent = `Υγρασία: ${h.relative_humidity_2m[i]}%`; //   #humidity     → υγρασία + "%"
+        document.getElementById("rain").textContent = `Βροχή: ${h.rain[i]} mm`; //   #rain         → βροχή + " mm"
+
+        // TODO 5: Κρύψε το #error και εμφάνισε το #result
+        errorBox.classList.add("hidden");
+        resultBox.classList.remove("hidden");
+    });
+
+    // Βοηθητική function (σου τη δίνω έτοιμη).
+    // Οι ώρες στο JSON είναι π.χ. "2026-10-30T18:00:00".
+    // Φτιάχνουμε το "2026-10-30T18" για την τρέχουσα ώρα και βρίσκουμε σε ποια θέση της λίστας είναι.
+    function findCurrentHourIndex(times) {
+        const now = new Date();
+        // padStart(2, "0"): το 9 γίνεται "09", για να ταιριάζει με τη μορφή του JSON
+        const pad = (n) => String(n).padStart(2, "0");
+        const prefix = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}`;
+        // findIndex: η θέση του πρώτου στοιχείου που ξεκινάει με το prefix
+        const index = times.findIndex((t) => t.startsWith(prefix));
+        // Αν δεν βρεθεί (-1), πάρε την πρώτη θέση
+        return index === -1 ? 0 : index;
+    }
+</script>
 </body>
 </html>
