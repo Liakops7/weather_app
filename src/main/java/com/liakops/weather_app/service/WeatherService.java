@@ -5,7 +5,6 @@ import com.liakops.weather_app.model.GeocodingResponse;
 import com.liakops.weather_app.model.WeatherResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 
