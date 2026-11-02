@@ -1,68 +1,56 @@
-// Βρίσκουμε τη φόρμα και "ακούμε" πότε γίνεται submit (Enter ή κλικ στο κουμπί)
+// Handle form submit (Enter or button click)
     const form = document.getElementById("search-form");
 
     form.addEventListener("submit", async (event) => {
-        // Χωρίς αυτό, ο browser θα έκανε reload τη σελίδα (default συμπεριφορά φόρμας)
+        // Prevent page reload
         event.preventDefault();
 
-        // Τι έγραψε ο χρήστης
+        // User input
         const city = document.getElementById("city-input").value;
 
-        // Βρίσκουμε μία φορά τα δύο "κουτιά" που θα εμφανίζουμε/κρύβουμε,
-        // για να μην γράφουμε συνέχεια document.getElementById(...)
+        // Cache the error and result elements
         const errorBox = document.getElementById("error");
         const resultBox = document.getElementById("result");
 
-        // ── TODO 1: Κλήση στο backend ──
-        // Backticks ` ` + ${...} για να μπει η τιμή της πόλης μέσα στο URL.
-        // encodeURIComponent: "Νέα Σμύρνη" → "%CE%9D%CE%AD%CE%B1%20..." (ασφαλές για URL)
-        // TODO 1: Κάλεσε το /weather με την πόλη, με fetch και await
-        //         Χρησιμοποίησε template literal και encodeURIComponent(city),
-        //         ώστε ελληνικά και κενά να μπαίνουν σωστά στο URL
+        // Call the backend (encode city for the URL)
         const response = await fetch(`/weather?city=${encodeURIComponent(city)}`);
 
-
-        // TODO 2: Αν η απάντηση ΔΕΝ είναι ok:
-        //         - γράψε στο #error "Η πόλη δεν βρέθηκε" και εμφάνισέ το
-        //         - κρύψε το #result
-        //         - return (σταμάτα εδώ)
+        // Show error if the city was not found
         if (!response.ok) {
-            errorBox.textContent = "H πόλη δεν βρέθηκε"; // Γράφουμε το μήνυμα
-            errorBox.classList.remove("hidden"); // Εμφανίζουμε το μήνυμα
-            resultBox.classList.add("hidden");// Κρύβουμε τυχόν παλιό αποτέλεσμα
-            return;// Σταματάμε: δεν υπάρχουν δεδομένα για να δείξουμε
+            errorBox.textContent = "H πόλη δεν βρέθηκε";
+            errorBox.classList.remove("hidden");
+            resultBox.classList.add("hidden");
+            return;
         }
-        // TODO 3: Μετάτρεψε την απάντηση σε JSON
+
+        // Parse JSON response
         const data = await response.json();
 
-        // Για να μην γράφουμε συνέχεια "data.hourly"
+        // Shortcut for hourly data
         const h = data.hourly;
 
-        // Η θέση της τρέχουσας ώρας μέσα στις λίστες
+        // Index of the current hour
         const i = findCurrentHourIndex(h.time);
 
-        // TODO 4: Γέμισε τα στοιχεία με textContent, χρησιμοποιώντας τη θέση i:
-        document.getElementById("city-name").textContent = city; //   #city-name    → η πόλη που έγραψε ο χρήστης
-        document.getElementById("temperature").textContent = `${h.temperature_2m[i]} °C`; //   #temperature  → θερμοκρασία + " °C"`
-        document.getElementById("wind").textContent = `Άνεμος: ${h.wind_speed_10m[i]} kn από ${h.wind_direction_10m[i]}°`; //   #wind → ταχύτητα ανέμου + " kn" και κατεύθυνση + "°"
-        document.getElementById("humidity").textContent = `Υγρασία: ${h.relative_humidity_2m[i]}%`; //   #humidity     → υγρασία + "%"
-        document.getElementById("rain").textContent = `Βροχή: ${h.rain[i]} mm`; //   #rain         → βροχή + " mm"
+        // Fill in the weather details
+        document.getElementById("city-name").textContent = city;
+        document.getElementById("temperature").textContent = `${h.temperature_2m[i]} °C`;
+        document.getElementById("wind").textContent = `Άνεμος: ${h.wind_speed_10m[i]} kn από ${h.wind_direction_10m[i]}°`;
+        document.getElementById("humidity").textContent = `Υγρασία: ${h.relative_humidity_2m[i]}%`;
+        document.getElementById("rain").textContent = `Βροχή: ${h.rain[i]} mm`;
 
-        // TODO 5: Κρύψε το #error και εμφάνισε το #result
+        // Hide error, show result
         errorBox.classList.add("hidden");
         resultBox.classList.remove("hidden");
     });
 
-    // Βοηθητική function (σου τη δίνω έτοιμη).
-    // Οι ώρες στο JSON είναι π.χ. "2026-10-30T18:00:00".
-    // Φτιάχνουμε το "2026-10-30T18" για την τρέχουσα ώρα και βρίσκουμε σε ποια θέση της λίστας είναι.
+    // Find the index of the current hour in the times list (e.g. "2026-10-30T18:00")
     function findCurrentHourIndex(times) {
         const now = new Date();
-        // padStart(2, "0"): το 9 γίνεται "09", για να ταιριάζει με τη μορφή του JSON
+        // Zero-pad to two digits
         const pad = (n) => String(n).padStart(2, "0");
         const prefix = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}`;
-        // findIndex: η θέση του πρώτου στοιχείου που ξεκινάει με το prefix
         const index = times.findIndex((t) => t.startsWith(prefix));
-        // Αν δεν βρεθεί (-1), πάρε την πρώτη θέση
+        // Fall back to the first entry if not found
         return index === -1 ? 0 : index;
     }

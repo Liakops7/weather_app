@@ -10,13 +10,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class WeatherService {
+    // Open-Meteo API clients
     private final RestClient forecastClient = RestClient.create("https://api.open-meteo.com");
     private final RestClient geocodingClient = RestClient.create("https://geocoding-api.open-meteo.com");
 
     public WeatherResponse getForecast(String city) {
 
+        // Resolve city to coordinates, then fetch the hourly forecast
         GeoResult location = findCity(city);
 
+        // 10-day ECMWF forecast, wind in knots, local timezone
         WeatherResponse result = forecastClient
                 .get()
                 .uri("/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,rain,wind_speed_10m,wind_direction_10m,relative_humidity_2m,wind_gusts_10m&models=ecmwf_ifs&timezone=auto&wind_speed_unit=kn&forecast_days=10",
@@ -26,12 +29,14 @@ public class WeatherService {
         return result;
     }
 
+    // Returns the best match for the city name
     public GeoResult findCity (String city){
         GeocodingResponse response = geocodingClient
                 .get()
                 .uri("/v1/search?name={name}&count=1&language=el", city)
                 .retrieve()
                 .body(GeocodingResponse.class);
+        // Respond with 404 if no match
         if (response == null || response.results() == null || response.results().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found: " + city);
         }

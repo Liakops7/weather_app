@@ -2,31 +2,28 @@
 <html lang="el">
 <head>
     <meta charset="UTF-8">
-    <!--for mobile versions -->
+    <!-- mobile viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Καιρός</title>
 
 </head>
 
-<!-- TODO (Tailwind): φόντο σελίδας (π.χ. ουρανί gradient), κεντράρισμα, padding -->
 <body class="">
 
-<!-- TODO (Tailwind): κάρτα στο κέντρο, λευκό φόντο, στρογγυλές γωνίες, σκιά -->
 <main class="">
 
     <h1 class="">Καιρός</h1>
 
     <!-- search bar -->
-    <!-- TODO (Tailwind): input και κουμπί δίπλα-δίπλα (flex) -->
     <form id="search-form" class="">
         <input id="city-input" type="text" placeholder="Γράψε πόλη..." required class="">
         <button type="submit" class="">Αναζήτηση</button>
     </form>
 
-    <!-- error catching: (hidden) -->
+    <!-- error message (hidden) -->
     <p id="error" class="hidden"></p>
 
-    <!-- results: (hidden) -->
+    <!-- results (hidden) -->
     <section id="result" class="hidden">
         <h2 id="city-name" class=""></h2>
         <p id="temperature" class=""></p>

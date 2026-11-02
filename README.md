@@ -43,7 +43,6 @@ This is my first Spring Boot project, built step by step to learn backend develo
 |------|---------|
 | **HTML** | Page structure (served as a static file by Spring Boot) |
 | **JavaScript (Fetch API, async/await)** | Calls the backend API and updates the page |
-| **Tailwind CSS v4 (CDN)** | Utility-first CSS framework |
 
 ### External APIs
 | API | Purpose |
@@ -136,7 +135,8 @@ src/main/
 └── resources/
     ├── application.properties         # Application configuration
     └── static/
-        └── index.html                 # Search page (HTML + JavaScript + Tailwind)
+        ├── index.html                 # Search page markup
+        └── app.js                     # Calls /weather and renders the result
 ```
 
 ## 📚 Development Log
@@ -166,7 +166,7 @@ Moved the API logic from the controller into `WeatherService` (`@Service`), foll
 Added the Open-Meteo Geocoding API to convert a city name into coordinates before fetching the forecast. Used URI variables (`{name}`, `{lat}`, `{lon}`) so that Greek characters and spaces are encoded correctly. When a city is not found, the service throws a `ResponseStatusException` and the API returns `404 Not Found` instead of crashing with a `NullPointerException`.
 
 ### Step 9 – Search page
-Built `index.html` as a static page served by Spring Boot. It uses JavaScript (`fetch`, `async/await`) to call `/weather`, finds the forecast entry for the current hour, and shows an error message for unknown cities. Tailwind CSS is loaded from a CDN.
+Built `index.html` as a static page served by Spring Boot, with the logic in `app.js`. It uses JavaScript (`fetch`, `async/await`) to call `/weather`, finds the forecast entry for the current hour, and shows an error message for unknown cities.
 
 ### Step 10 – Git branching and Pull Requests
 Developed the search page on a feature branch (`feature/city-search-ui`), opened a Pull Request on GitHub, merged it into `master` and deleted the branch, following a typical team workflow.
@@ -176,8 +176,9 @@ Developed the search page on a feature branch (`feature/city-search-ui`), opened
 - [x] Service layer and dependency injection
 - [x] Search weather by city name (Open-Meteo Geocoding API)
 - [x] Search page with HTML and JavaScript
-- [x] Error handling when the Open-Meteo API is unavailable
-- [x] Unit tests for `WeatherService`
+- [ ] Error handling when the Open-Meteo API is unavailable
+- [ ] Unit tests for `WeatherService`
+- [ ] Style the page with Tailwind CSS
 
 ## 👤 Author
 

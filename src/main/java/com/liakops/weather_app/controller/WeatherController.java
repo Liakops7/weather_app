@@ -15,6 +15,7 @@ public class WeatherController {
         this.weatherService = weatherService;
     }
 
+    // GET /weather?city=... (defaults to Athens)
     @GetMapping("/weather")
     public WeatherResponse getWeather(@RequestParam(defaultValue = "Αθήνα") String city) {
         return weatherService.getForecast(city);
